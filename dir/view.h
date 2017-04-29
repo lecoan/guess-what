@@ -3,9 +3,6 @@
 #ifndef VIEW_H
 #define VIEW_H
 
-class MainView {
-
-};
 
 class LoginView {
 private:

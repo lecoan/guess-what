@@ -145,7 +145,7 @@ void GameView::showQuestion() {
 
         cout << "please input the word if you can remember(\\quit to exit)" << endl;
         cin >> word;
-        if (word == "\\quit to exit")
+        if (word == "\\quit")
             break;
         else if (word == ans) {
             player->exprIncrease(EXPR_FOR_USER);

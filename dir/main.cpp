@@ -27,5 +27,7 @@ int main() {
             std::cout << "unknown command" << std::endl;
         }
     }
+    UserService::getInstance()->writeToDisk();
+    WordService::getInstance()->writeToDisk();
     return 0;
 }

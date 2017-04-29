@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <fstream>
 #include <sstream>
+#include <iostream>
 
 using std::ifstream;
 using std::ofstream;
@@ -37,7 +38,7 @@ unsigned User::getExpr() {
 void User::exprIncrease(int n) {
     int t = this->expr + n;
     this->expr = expr % LEVLE_NEED_EXPR;
-    this->level += t / expr;
+    this->level += t / LEVLE_NEED_EXPR;
 }
 
 
@@ -91,7 +92,7 @@ Master::Master(String username, String passwd, unsigned int level,
     this->outNum = num;
 }
 
-const String UserService::PATH = "./data/users";
+const String UserService::PATH = ".\\data\\users.txt";
 UserService *UserService::instance = nullptr;
 
 UserService::UserService() {
@@ -108,7 +109,7 @@ UserService *UserService::getInstance() {
     if (instance == nullptr) {
         instance = new UserService();
     }
-    return nullptr;
+    return instance;
 }
 
 void UserService::updateUser(User *user) {
@@ -166,7 +167,7 @@ std::set<String> UserService::getOrder(int level, int nums, String type) {
 }
 
 void UserService::readUserFromDisk() {
-    ifstream in(PATH);
+    ifstream in(PATH, std::ios::in);
     String line;
     User *user;
     String type, name, passwd;
@@ -183,10 +184,12 @@ void UserService::readUserFromDisk() {
         levellistMap[num].insert(user);
         users.insert(user);
     }
+    in.close();
 }
 
 void UserService::saveUser(User *user) {
     users.insert(user);
+    nameMap[user->getUsername()] = user;
     //after push, the num will be +
     levellistMap[user->getLevel()].insert(user);
     int num;
@@ -205,7 +208,7 @@ User *UserService::getUserByName(String name) {
 }
 
 void UserService::writeToDisk() {
-    ofstream out(PATH);
+    ofstream out(PATH, std::ios::out);
     for (auto it = users.begin(); it != users.end(); ++it) {
         User *user = (*it);
         out << user->getType() << " "
@@ -219,10 +222,11 @@ void UserService::writeToDisk() {
             out << dynamic_cast<Master *>(user)->getOutNum();
         out << std::endl;
     }
+    out.close();
 }
 
 
-const String WordService::PATH = "./data/words";
+const String WordService::PATH = ".\\data\\words.txt";
 WordService *WordService::instance = nullptr;
 
 WordService::WordService() {
@@ -250,17 +254,19 @@ void WordService::saveWord(String word) {
 
 
 void WordService::readWordsFromDisk() {
-    ifstream in(PATH);
+    ifstream in(PATH, std::ios::in);
     String word;
     while (in >> word)
         words.push_back(word);
+    in.close();
 }
 
 void WordService::writeToDisk() {
-    ofstream out(PATH);
+    ofstream out(PATH, std::ios::out);
     for (auto it = words.begin(); it != words.end(); ++it) {
         out << *it << " ";
     }
+    out.close();
 }
 
 bool operator==(User &a, User &b) {
