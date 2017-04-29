@@ -121,6 +121,8 @@ public:
     void saveWord(String word);
 
     void writeToDisk();
+
+    bool contain(String word);
 };
 
 const int EXPR_FOR_USER = 10;

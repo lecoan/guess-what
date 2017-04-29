@@ -22,7 +22,7 @@ bool UserController::login(String &username, String &password) {
 }
 
 bool UserController::logout() {
-    if (loginUser->getUsername().empty()) {
+    if (loginUser == nullptr) {
         return false;
     }
     service->updateUser(loginUser);
@@ -110,8 +110,11 @@ User *GameController::getLoginUser() {
     return userInstance->getLoginUser();
 }
 
-void GameController::saveWord(String word) {
+bool GameController::saveWord(String word) {
+    if(service->contain(word))
+        return false;
     service->saveWord(word);
+    return true;
 
 }
 

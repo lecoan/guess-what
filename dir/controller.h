@@ -64,7 +64,7 @@ public:
 
     bool isPlayer();
 
-    void saveWord(String word);
+    bool saveWord(String word);
 };
 
 #endif

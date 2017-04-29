@@ -8,6 +8,7 @@ using std::cin;
 using std::endl;
 using std::regex_match;
 using std::regex;
+using std::getline;
 
 static regex matchText("^[a-zA-Z][a-zA-Z0-9_]{4,15}$");
 static regex matchWord("^([a-z]+){1,10}$");
@@ -89,24 +90,29 @@ void RegisterView::showRegister() {
 UserController *OrderView::controller = nullptr;
 
 void OrderView::showOrder() {
+
+    if (controller == nullptr)
+        controller = UserController::getInstance();
+
     UserController::Condition condition;
     String temp;
     cout << "this is an search view, you can enter which attribute you want to search" << endl
          << "if you don't want to limit, just type ENTER" << endl
          << "type \"\\quit\" to exit" << endl;
+    getchar();
     while (true) {
         cout << "which level you want to find?" << endl;
-        cin >> temp;
+        getline(cin, temp);
         if (temp == "\\quit")
             break;
         if (temp != "") condition.level = std::atoi(temp.c_str());
         cout << "how many nums the user get you want to find?" << endl;
-        cin >> temp;
+        getline(cin, temp);
         if (temp == "\\quit")
             break;
         if (temp != "") condition.nums = std::atoi(temp.c_str());
         cout << "which user type you want to find?" << endl;
-        cin >> temp;
+        getline(cin, temp);
         if (temp == "\\quit")
             break;
         condition.type = temp;
@@ -114,7 +120,7 @@ void OrderView::showOrder() {
         cout << "here comes the result" << endl;
         for (auto it = set.begin(); it != set.end(); ++it)
             cout << "username: " << *it << endl;
-        cout << "total:" << set.size() << endl;
+        cout << "total:" << set.size() << endl << endl;
     }
 }
 
@@ -165,11 +171,49 @@ void GameView::getQuestion() {
             break;
         else if (!regex_match(word, matchWord))
             cout << "please input a valid word!(lowercase)" << endl;
+        else if (!controller->saveWord(word))
+            cout << "this word has already in the database!" << endl;
         else {
             master->exprIncrease(EXPR_FOR_USER);
             master->outNumIncrease();
-            controller->saveWord(word);
             cout << "word:" + word + " has been saved successfully!" << endl;
+        }
+    }
+}
+
+UserController *MainView::controller = nullptr;
+
+void MainView::showMain() {
+    controller = UserController::getInstance();
+    std::string command;
+    std::cout << "guest@main>";
+    while (std::cin >> command) {
+        if (command == "login") {
+            LoginView::showLogin();
+        } else if (command == "register") {
+            RegisterView::showRegister();
+        } else if (command == "play") {
+            GameView::showGame();
+        } else if (command == "order") {
+            OrderView::showOrder();
+        } else if (command == "logout") {
+            controller->logout();
+        } else if (command == "exit") {
+            std::cout << "bey!" << std::endl;
+            break;
+        } else if (command == "help") {
+            std::cout << "login" << std::endl
+                      << "register" << std::endl
+                      << "play" << std::endl
+                      << "order" << std::endl
+                      << "exit" << std::endl;
+        } else {
+            std::cout << "unknown command" << std::endl;
+        }
+        if (controller->hasLogin()) {
+            cout << controller->getLoginUser()->getUsername() + "@main>";
+        } else {
+            std::cout << "guest@main>";
         }
     }
 }

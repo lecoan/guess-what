@@ -92,7 +92,7 @@ Master::Master(String username, String passwd, unsigned int level,
     this->outNum = num;
 }
 
-const String UserService::PATH = ".\\data\\users.txt";
+const String UserService::PATH = "users.txt";
 UserService *UserService::instance = nullptr;
 
 UserService::UserService() {
@@ -182,6 +182,7 @@ void UserService::readUserFromDisk() {
         }
         numlistMap[user->getLevel()].insert(user);
         levellistMap[num].insert(user);
+        nameMap[user->getUsername()] = user;
         users.insert(user);
     }
     in.close();
@@ -226,7 +227,7 @@ void UserService::writeToDisk() {
 }
 
 
-const String WordService::PATH = ".\\data\\words.txt";
+const String WordService::PATH = "words.txt";
 WordService *WordService::instance = nullptr;
 
 WordService::WordService() {
@@ -267,6 +268,13 @@ void WordService::writeToDisk() {
         out << *it << " ";
     }
     out.close();
+}
+
+bool WordService::contain(String word) {
+    for(int i = 0;i<words.size();++i)
+        if(word == words[i])
+            return true;
+    return false;
 }
 
 bool operator==(User &a, User &b) {

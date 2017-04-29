@@ -3,6 +3,12 @@
 #ifndef VIEW_H
 #define VIEW_H
 
+class MainView {
+private:
+    static UserController* controller;
+public:
+    static void showMain();
+};
 
 class LoginView {
 private:
