@@ -1,40 +1,42 @@
-#pragma once
 #include "controller.h"
 
-/*基本视图*/
-class View {
-protected:
-	bool dispose(String info); //根据信息关闭当前窗口
+#ifndef VIEW_H
+#define VIEW_H
+
+class MainView {
+
 };
 
-/*登陆视图*/
-class LoginView : public View {
+class LoginView {
 private:
-	UserController* controller;
+    static UserController *controller;
 public:
-	void showLogin();
+    static void showLogin();
 };
 
-/*注册视图*/
-class RegisterView :public View {
+class RegisterView {
 private:
-	UserController* controller;
+    static UserController *controller;
 public:
-	void showRegister();
+    static void showRegister();
 };
 
-/*查询视图*/
-class OrderView :public View {
+class OrderView {
 private:
-	UserController* controller;
+    static UserController *controller;
 public:
-	void showOrder();
+    static void showOrder();
 };
 
-/*游戏视图*/
-class GameView :public View {
+class GameView {
 private:
-	GameController* controller;
+    static GameController *controller;
 public:
-	void showGame();
+    static void showGame();
+
+    static void showQuestion();
+
+    static void getQuestion();
 };
+
+#endif
