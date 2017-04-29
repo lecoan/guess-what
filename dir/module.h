@@ -2,11 +2,10 @@
 #include<string>
 #include<map>
 #include<set>
+#include <list>
 #include<vector>
 typedef std::string String;
-/*
- *所有用户的基类模型
- */
+
 class User {
 protected:
 	String username;
@@ -15,7 +14,7 @@ protected:
 	unsigned expr;
 	String type;
 public:
-	User() = delete;
+	virtual User() = 0;
 	String getUsername();
 	void setUsername(String name);
 	String getPassword();
@@ -28,9 +27,7 @@ public:
 	friend bool operator == (User& a, User& b);
 	friend bool operator < (User& a, User&b);
 };
-/*
- *玩家的基类模型
- */
+
 class Player : public User {
 private:
 	unsigned playedNum;
@@ -40,9 +37,7 @@ public:
 	void playedNumIncrease(int n = 1);
 };
 
-/*
- *出题者的基类模型
- */
+
 class Master :public User {
 private:
 	unsigned outNum;
@@ -52,38 +47,39 @@ public:
 	void outNumIncrease(int n = 1);
 };
 
-/*
- *对用户操作的一次封装
- */
 class UserService {
 private:
 	UserService();
 	~UserService();
 	static UserService* instance;
 	const static String PATH;
-	std::set<User> userSet;
-	std::map<String,std::set<User>::iterator> cacheMap;
+	std::set<User *> users;
+	std::map<String,User *> nameMap;
+	std::map<int,std::set<User *>> levellistMap;
+	std::map<int,std::set<User *>> numlistMap;
+
+	void readUserFromDisk();
 
 public:
 	static UserService* getInstance();
-	void updateUser(User& user);
-	User getUserByName(String& name);
-	void addExpr(String name);
+	void updateUser(User * user);
+	void saveUser(User * user);
+	User* getUserByName(String& name);
+	void addExpr(User * user, int num);
 	std::set<String> getOrder(unsigned level, unsigned nums, String type);
 };
 
-/*
- *对题库的一次封装
- */
 class WordService {
 private:
 	const static String PATH;
 	static WordService* instance;
 	WordService();
 	~WordService();
-	std::set<String> wordSet;
+	std::vector<String> wordSet;
+
+	void readWordsFromDisk();
 public:
 	static WordService* getInstance();
-	String getWord(int level = -1);		//根据传入的题目难度获取单词，默认为随机
+	String getWord(int level = -1);
 	void saveWord(String word);
 };

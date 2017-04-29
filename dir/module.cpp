@@ -56,6 +56,10 @@ void Player::playedNumIncrease(int n)
 	this->playedNum++;
 }
 
+Player::Player() {
+	type = "player";
+}
+
 unsigned Master::getOutNum()
 {
 	return this->outNum;
@@ -66,16 +70,24 @@ void Master::outNumIncrease(int n)
 	this->outNum += n;
 }
 
+Master::Master() {
+	type = "master";
+
+}
+
 const String UserService::PATH = "./data/users";
 
 UserService::UserService()
 {
-	//TODO
+	readUserFromDisk();
 }
 
+//TODO auto use it
 UserService::~UserService()
 {
-	//TODO
+	for(auto it = users.begin();it!=users.end();++it)
+		delete(*it);
+	delete instance;
 }
 
 UserService * UserService::getInstance()
@@ -86,34 +98,68 @@ UserService * UserService::getInstance()
 	return nullptr;
 }
 
-void UserService::updateUser(User & user)
+void UserService::updateUser(User * user)
 {
-	this->userSet.insert(user);
+
+	for(auto it = levellistMap.begin();it!=levellistMap.end();++it)
+	{
+		if(it->first == user->getLevel())
+			it->second.insert(user);
+		else if(it->second.find(user)!=it->second.end()){
+			it->second.erase(user);
+		}
+	}
+
+	int num;
+	if(user->getType() == "player"){
+		num = dynamic_cast<Player*>(user)->getPlayedNum();
+	} else{
+		num = dynamic_cast<Master*>(user)->getOutNum();
+	}
+	for(auto it = numlistMap.begin();it!=numlistMap.end();++it)
+	{
+		if(it->first == num)
+			it->second.insert(user);
+		else if(it->second.find(user)!=it->second.end()){
+			it->second.erase(user);
+		}
+	}
 }
 
 
-void UserService::addExpr(String name)
+void UserService::addExpr(User * user, int num)
 {
+	user->exprIncrease(num);
 }
 
 std::set<String> UserService::getOrder(unsigned level, unsigned nums, String type)
 {
 	std::set<String> ans;
-	for (auto it = this->userSet.begin(); it != userSet.end(); ++it) {
-		if (it->getLevel == level || level == -1) {
-			if (type.empty() || type == it->getType) {
-				if (nums == -1) {
-					ans.insert(it->getUsername);
-				}
-				if (type == "Player") {
-					
-				}
-				else {
 
-				}
-			}
-		}
+}
+
+//TODO
+void UserService::readUserFromDisk() {
+
+}
+
+void UserService::saveUser(User * user) {
+	users.insert(user);
+	//after push, the num will be +
+	levellistMap[user->getLevel()].insert(user);
+	int num;
+	if(user->getType() == "player"){
+		num = dynamic_cast<Player*>(user)->getPlayedNum();
+	} else{
+		num = dynamic_cast<Master*>(user)->getOutNum();
 	}
+	numlistMap[num].insert(user);
+}
+
+User *UserService::getUserByName(String &name) {
+	if(nameMap.find(name)!=nameMap.end())
+		return nameMap[name];
+	return nullptr;
 }
 
 
@@ -121,7 +167,7 @@ const String WordService::PATH = "./data/words";
 
 WordService::WordService()
 {
-	//TODO ¶ÁÈ¡´Ê¿â
+	readWordsFromDisk();
 }
 
 WordService::~WordService()
@@ -139,12 +185,17 @@ WordService * WordService::getInstance()
 
 String WordService::getWord(int level)
 {
-	
+	return wordSet[random()%wordSet.size()];
 }
 
 void WordService::saveWord(String word)
 {
-	this->wordSet.insert(word);
+	this->wordSet.push_back(word);
+}
+
+//TODO
+void WordService::readWordsFromDisk() {
+
 }
 
 bool operator==(User & a, User & b)

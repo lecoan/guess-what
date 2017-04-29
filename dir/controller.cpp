@@ -1,22 +1,21 @@
 #include "controller.h"
 
-UserController::UserController()
-{
-}
-
 UserController::~UserController()
 {
 }
 
 UserController * UserController::getInstance()
 {
-	return nullptr;
+    if(instance == nullptr) {
+        instance = new UserController();
+    }
+	return instance;
 }
 
 bool UserController::login(String & username, String & password)
 {
-	User u = service->getUserByName(username);
-	if (u.getPassword() == password) {
+	User * u = service->getUserByName(username);
+	if (u!= nullptr && u->getPassword() == password) {
 		loginUser = u;
 		return true;
 	}
@@ -25,37 +24,30 @@ bool UserController::login(String & username, String & password)
 
 bool UserController::logout()
 {
-	if (loginUser.getUsername().empty()) {
+	if (loginUser->getUsername().empty()) {
 		return false;
 	}
 	service->updateUser(loginUser);
-	loginUser.setUsername("");
 	return true;
-	
-	
 }
 
 bool UserController::signUp(String & username, String & password, bool isplayer)
 {
-	if (service->getUserByName().getUsername().empty()) {
-		if (isplayer) {
-			Player p;
-			p.setUsername(username);
-			p.setPassword(password);
-			service->updateUser(p);
-		}
-		else {
-			Master p;
-			p.setUsername(username);
-			p.setPassword(password);
-			service->updateUser(p);
-		}
+    User * user;
+	if (service->getUserByName(username)== nullptr) {
+		if (isplayer)
+			user = new Player();
+		else
+			user = new Master();
+        user->setUsername(username);
+        user->setPassword(password);
+        service->saveUser(user);
 		return true;
 	}
 	return false;
 }
 
-User UserController::findByName(String & name)
+User* UserController::findByName(String & name)
 {
 	return service->getUserByName(name);
 }
