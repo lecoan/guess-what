@@ -15,12 +15,6 @@ private:
     ~UserController();
 
 public:
-    struct Condition {
-        int level;
-        int nums;
-        String type;  //player or master
-        Condition();
-    };
 
     static UserController *getInstance();
 
@@ -32,7 +26,7 @@ public:
 
     User *findByName(String &name);
 
-    std::set<String> findByCondition(Condition &con);
+    std::vector<String> findByCondition(int kind, String type);
 
     bool hasLogin();
 

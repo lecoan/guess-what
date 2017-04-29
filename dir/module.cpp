@@ -121,7 +121,13 @@ void UserService::updateUser(User *user) {
             it->second.erase(user);
         }
     }
-
+    for (auto it = exprlistMap.begin(); it != exprlistMap.end(); ++it) {
+        if (it->first == user->getExpr())
+            it->second.insert(user);
+        else if (it->second.find(user) != it->second.end()) {
+            it->second.erase(user);
+        }
+    }
     int num;
     if (user->getType() == "player") {
         num = dynamic_cast<Player *>(user)->getPlayedNum();
@@ -138,30 +144,38 @@ void UserService::updateUser(User *user) {
 }
 
 
-std::set<String> UserService::getOrder(int level, int nums, String type) {
-    std::set<String> ans;
-    bool needlevel = level != -1;
-    bool neednums = nums != -1;
-    bool needType = type != "";
-    for (auto it = users.begin(); it != users.end(); ++it) {
-        User *user = *it;
-        if (!needlevel || (level == user->getLevel())) {
-            if (!needType || type == user->getType()) {
-                if (!neednums) {
-                    ans.insert(user->getUsername());
-                } else {
-                    if (user->getType() == "player") {
-                        if (dynamic_cast<Player *>(user)->getPlayedNum() == nums)
-                            ans.insert(user->getUsername());
-                    } else {
-                        if (dynamic_cast<Master *>(user)->getOutNum() == nums)
-                            ans.insert(user->getUsername());
+std::vector<String> UserService::getOrder(int kind, String type) {
+    std::vector<String> ans;
+    switch (kind) {
+        case 1:
+            for(auto it = levellistMap.rbegin();it!=levellistMap.rend();++it)
+                for(auto jt = it->second.begin();jt!=it->second.end();++jt)
+                    if((*jt)->getType() == type)
+                    ans.push_back((*jt)->getUsername()
+                                  + " level:" + std::to_string((*jt)->getLevel()));
+            break;
+        case 2:
+            for(auto it = numlistMap.rbegin();it!=numlistMap.rend();++it)
+                for(auto jt = it->second.begin();jt!=it->second.end();++jt)
+                    if((*jt)->getType() == type){
+                        if(type == "player")
+                            ans.push_back((*jt)->getUsername()
+                                          + " nums:" + std::to_string(dynamic_cast<Player*>(*jt)->getPlayedNum()));
+                        else{
+                            ans.push_back((*jt)->getUsername()
+                                          + " nums:" + std::to_string(dynamic_cast<Master*>(*jt)->getOutNum()));
+                        }
                     }
-                }
-                if (ans.size() > 50)
-                    break;
-            }
-        }
+
+            break;
+        case 3:
+            for(auto it = exprlistMap.rbegin();it!=exprlistMap.rend();++it)
+                for(auto jt = it->second.begin();jt!=it->second.end();++jt)
+                    ans.push_back((*jt)->getUsername()
+                                  + " expr:" + std::to_string((*jt)->getExpr()));
+            break;
+        default:
+            break;
     }
     return ans;
 }
@@ -182,6 +196,7 @@ void UserService::readUserFromDisk() {
         }
         numlistMap[user->getLevel()].insert(user);
         levellistMap[num].insert(user);
+        exprlistMap[expr].insert(user);
         nameMap[user->getUsername()] = user;
         users.insert(user);
     }
@@ -193,6 +208,7 @@ void UserService::saveUser(User *user) {
     nameMap[user->getUsername()] = user;
     //after push, the num will be +
     levellistMap[user->getLevel()].insert(user);
+    exprlistMap[user->getExpr()].insert(user);
     int num;
     if (user->getType() == "player") {
         num = dynamic_cast<Player *>(user)->getPlayedNum();

@@ -49,9 +49,6 @@ User *UserController::findByName(String &name) {
     return service->getUserByName(name);
 }
 
-std::set<String> UserController::findByCondition(Condition &con) {
-    return service->getOrder(con.level, con.nums, con.type);
-}
 
 bool UserController::hasLogin() {
     return loginUser != nullptr;
@@ -66,11 +63,10 @@ User *UserController::getLoginUser() {
     return loginUser;
 }
 
-UserController::Condition::Condition() {
-    level = -1;
-    nums = -1;
-    type = "";
+std::vector<String> UserController::findByCondition(int kind, String type) {
+    return service->getOrder(kind, type);
 }
+
 
 GameController *GameController::gameInstance = nullptr;
 

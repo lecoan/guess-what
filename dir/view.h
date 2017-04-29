@@ -29,17 +29,20 @@ private:
     static UserController *controller;
 public:
     static void showOrder();
+
+    static void showSearch();
 };
 
 class GameView {
 private:
     static GameController *controller;
-public:
-    static void showGame();
 
     static void showQuestion();
 
     static void getQuestion();
+
+public:
+    static void showGame();
 };
 
 #endif

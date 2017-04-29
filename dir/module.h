@@ -83,6 +83,7 @@ private:
     std::map<String, User *> nameMap;
     std::map<int, std::set<User *>> levellistMap;
     std::map<int, std::set<User *>> numlistMap;
+    std::map<int, std::set<User *>> exprlistMap;
 
     void readUserFromDisk();
 
@@ -95,7 +96,7 @@ public:
 
     User *getUserByName(String name);
 
-    std::set<String> getOrder(int level, int nums, String type);
+    std::vector<String> getOrder(int kind, String type);
 
     void writeToDisk();
 };

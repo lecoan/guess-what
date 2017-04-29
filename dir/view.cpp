@@ -20,6 +20,9 @@ void LoginView::showLogin() {
         controller = UserController::getInstance();
     }
     while (true) {
+        if (controller->hasLogin()) {
+            cout << "please logout your current account" << endl;
+        }
         String username, passwd;
         cout << "your username:" << endl;
         cin >> username;
@@ -93,34 +96,41 @@ void OrderView::showOrder() {
 
     if (controller == nullptr)
         controller = UserController::getInstance();
-
-    UserController::Condition condition;
     String temp;
-    cout << "this is an search view, you can enter which attribute you want to search" << endl
-         << "if you don't want to limit, just type ENTER" << endl
+    cout << "this is an order view, you can enter which attribute you want to search" << endl
+         << "1. sort by level"<<endl
+         << "2. sort by played num"<<endl
+         << "3. sort by expr"<<endl
          << "type \"\\quit\" to exit" << endl;
-    getchar();
-    while (true) {
-        cout << "which level you want to find?" << endl;
-        getline(cin, temp);
-        if (temp == "\\quit")
-            break;
-        if (temp != "") condition.level = std::atoi(temp.c_str());
-        cout << "how many nums the user get you want to find?" << endl;
-        getline(cin, temp);
-        if (temp == "\\quit")
-            break;
-        if (temp != "") condition.nums = std::atoi(temp.c_str());
-        cout << "which user type you want to find?" << endl;
-        getline(cin, temp);
-        if (temp == "\\quit")
-            break;
-        condition.type = temp;
-        std::set<String> set = controller->findByCondition(condition);
-        cout << "here comes the result" << endl;
-        for (auto it = set.begin(); it != set.end(); ++it)
-            cout << "username: " << *it << endl;
-        cout << "total:" << set.size() << endl << endl;
+    cin>>temp;
+    if(temp == "\\quit")
+        return;
+    int kind = std::atoi(temp.c_str());
+    cout<<"player or master?"<<endl;
+    cin>>temp;
+    std::vector<String> vec =
+            controller->findByCondition(kind,temp);
+    cout << "here comes the result:" << endl;
+    for (auto it = vec.begin(); it != vec.end(); ++it)cout << "username: " << *it << endl;
+    cout << "total:" << vec.size() << endl << endl;
+}
+
+void OrderView::showSearch() {
+    if (controller == nullptr)
+        controller = UserController::getInstance();
+    String name;
+    cout << "this is an search view, you can enter a name search" << endl
+        << "type \"\\quit\" to exit" << endl;
+    cin>>name;
+    if(name == "\\quit")
+        return;
+    User * user = controller->findByName(name);
+    if(user == nullptr) {
+        cout<<"sorry, this user does not exist"<<endl;
+    } else{
+        cout<<"username:"<<user->getUsername()<<endl
+            <<"type:"<<user->getType()<<endl
+            <<"level:"<<user->getLevel()<<endl<<endl;
     }
 }
 
@@ -154,7 +164,7 @@ void GameView::showQuestion() {
             break;
         else if (word == ans) {
             player->exprIncrease(EXPR_FOR_USER);
-            cout << "you are right!" << endl;
+            std::cerr << "you are right!" << endl;
         }
         player->playedNumIncrease();
     }
@@ -195,17 +205,20 @@ void MainView::showMain() {
             GameView::showGame();
         } else if (command == "order") {
             OrderView::showOrder();
+        }else if(command == "search"){
+          OrderView::showSearch();
         } else if (command == "logout") {
             controller->logout();
         } else if (command == "exit") {
             std::cout << "bey!" << std::endl;
             break;
         } else if (command == "help") {
-            std::cout << "login" << std::endl
-                      << "register" << std::endl
-                      << "play" << std::endl
-                      << "order" << std::endl
-                      << "exit" << std::endl;
+            std::cout << "\tlogin" << std::endl
+                      << "\tregister" << std::endl
+                      << "\tplay" << std::endl
+                      << "\torder" << std::endl
+                      <<"\tsearch"<<endl
+                      << "\texit" << std::endl;
         } else {
             std::cout << "unknown command" << std::endl;
         }
