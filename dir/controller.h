@@ -18,7 +18,7 @@ public:
     struct Condition {
         int level;
         int nums;
-        String type;    //player or master
+        String type;  //player or master
         Condition();
     };
 

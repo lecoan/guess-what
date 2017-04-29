@@ -140,16 +140,15 @@ void GameView::showGame() {
     cout << "bey!" << endl;
 }
 
-//TODO
+
 void GameView::showQuestion() {
     Player *player = dynamic_cast<Player *>(controller->getLoginUser());
     String word, ans;
     while (true) {
         ans = controller->getWord();
-        cout << "word: " + ans << endl;
+        std::cerr << "word: " + ans;
         sleep(2);
-
-        cout << "please input the word if you can remember(\\quit to exit)" << endl;
+        cout << "\rplease input the word if you can remember(\\quit to exit)" << endl;
         cin >> word;
         if (word == "\\quit")
             break;

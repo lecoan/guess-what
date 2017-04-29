@@ -5,7 +5,7 @@
 
 class MainView {
 private:
-    static UserController* controller;
+    static UserController *controller;
 public:
     static void showMain();
 };
