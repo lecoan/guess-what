@@ -5,6 +5,12 @@ UserController *UserController::instance = nullptr;
 UserController::~UserController() {
 }
 
+UserController::Condition::Condition() {
+    level = -1;
+    nums = -1;
+    type = "";
+}
+
 UserController *UserController::getInstance() {
     if (instance == nullptr) {
         instance = new UserController();
@@ -63,8 +69,12 @@ User *UserController::getLoginUser() {
     return loginUser;
 }
 
-std::vector<String> UserController::findByCondition(int kind, String type) {
+std::vector<String> UserController::getOrder(int kind, String type) {
     return service->getOrder(kind, type);
+}
+
+std::set<String> UserController::findByCondition(UserController::Condition &con) {
+    return service->getUserNameByCondition(con.level,con.nums,con.type);
 }
 
 

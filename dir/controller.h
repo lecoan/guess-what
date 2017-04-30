@@ -17,6 +17,14 @@ private:
 
 public:
 
+    struct Condition {
+        int level;
+        int nums;
+        String type;    //player or master
+        Condition();
+    };
+
+
     static UserController *getInstance();
 
     bool login(String &username, String &password);
@@ -27,7 +35,9 @@ public:
 
     User *findByName(String &name);
 
-    std::vector<String> findByCondition(int kind, String type);
+    std::vector<String> getOrder(int kind, String type);
+
+    std::set<String> findByCondition(Condition &con);
 
     bool hasLogin();
 

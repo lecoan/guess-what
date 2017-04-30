@@ -27,12 +27,15 @@ public:
 class OrderView {
 private:
     static UserController *controller;
-public:
-    static void showOrder();
 
     static void showSearchByName();
 
     static void showSearchByCondition();
+
+public:
+    static void showOrder();
+
+    static void showSearch();
 };
 
 class GameView {
