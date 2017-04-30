@@ -154,17 +154,25 @@ void GameView::showGame() {
 void GameView::showQuestion() {
     Player *player = dynamic_cast<Player *>(controller->getLoginUser());
     String word, ans;
+    int count = 0;
     while (true) {
-        ans = controller->getWord();
+        ans = controller->getWord(player->getLevel());
         std::cerr << "word: " + ans;
-        sleep(2);
+        sleep(player->getLevel()>30?1:(3-player->getLevel()/10));
         cout << "\rplease input the word if you can remember(\\quit to exit)" << endl;
         cin >> word;
         if (word == "\\quit")
             break;
         else if (word == ans) {
-            player->exprIncrease(EXPR_FOR_USER);
             std::cerr << "you are right!" << endl;
+            count++;
+        } else {
+            count = 0;
+            std::cerr<<"sorry, you are wrong..."<<endl;
+        }
+        if(count == player->getLevel()) {
+            cout<<"you have gone through this"<< endl;
+            player->exprIncrease(EXPR_FOR_USER);
         }
         player->playedNumIncrease();
     }

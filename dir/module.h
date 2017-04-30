@@ -110,7 +110,7 @@ private:
 
     ~WordService();
 
-    std::vector<String> words;
+    std::map<unsigned ,std::vector<String>> wordsmap;
 
     void readWordsFromDisk();
 
@@ -127,6 +127,5 @@ public:
 };
 
 const int EXPR_FOR_USER = 10;
-const int LEVLE_NEED_EXPR = 100;
 
 #endif

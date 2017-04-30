@@ -36,6 +36,7 @@ unsigned User::getExpr() {
 }
 
 void User::exprIncrease(int n) {
+    int LEVLE_NEED_EXPR = level*EXPR_FOR_USER;
     int t = this->expr + n;
     this->expr = expr % LEVLE_NEED_EXPR;
     this->level += t / LEVLE_NEED_EXPR;
@@ -51,7 +52,7 @@ void Player::playedNumIncrease(int n) {
 }
 
 Player::Player() {
-    Player("", "", 0, 0, 0);
+    Player("", "", 1, 0, 0);
 }
 
 String Player::getType() {
@@ -76,7 +77,7 @@ void Master::outNumIncrease(int n) {
 }
 
 Master::Master() {
-    Master("", "", 0, 0, 0);
+    Master("", "", 1, 0, 0);
 }
 
 String Master::getType() {
@@ -148,29 +149,29 @@ std::vector<String> UserService::getOrder(int kind, String type) {
     std::vector<String> ans;
     switch (kind) {
         case 1:
-            for(auto it = levellistMap.rbegin();it!=levellistMap.rend();++it)
-                for(auto jt = it->second.begin();jt!=it->second.end();++jt)
-                    if((*jt)->getType() == type)
-                    ans.push_back((*jt)->getUsername()
-                                  + " level:" + std::to_string((*jt)->getLevel()));
+            for (auto it = levellistMap.rbegin(); it != levellistMap.rend(); ++it)
+                for (auto jt = it->second.begin(); jt != it->second.end(); ++jt)
+                    if ((*jt)->getType() == type)
+                        ans.push_back((*jt)->getUsername()
+                                      + " level:" + std::to_string((*jt)->getLevel()));
             break;
         case 2:
-            for(auto it = numlistMap.rbegin();it!=numlistMap.rend();++it)
-                for(auto jt = it->second.begin();jt!=it->second.end();++jt)
-                    if((*jt)->getType() == type){
-                        if(type == "player")
+            for (auto it = numlistMap.rbegin(); it != numlistMap.rend(); ++it)
+                for (auto jt = it->second.begin(); jt != it->second.end(); ++jt)
+                    if ((*jt)->getType() == type) {
+                        if (type == "player")
                             ans.push_back((*jt)->getUsername()
-                                          + " nums:" + std::to_string(dynamic_cast<Player*>(*jt)->getPlayedNum()));
-                        else{
+                                          + " nums:" + std::to_string(dynamic_cast<Player *>(*jt)->getPlayedNum()));
+                        else {
                             ans.push_back((*jt)->getUsername()
-                                          + " nums:" + std::to_string(dynamic_cast<Master*>(*jt)->getOutNum()));
+                                          + " nums:" + std::to_string(dynamic_cast<Master *>(*jt)->getOutNum()));
                         }
                     }
 
             break;
         case 3:
-            for(auto it = exprlistMap.rbegin();it!=exprlistMap.rend();++it)
-                for(auto jt = it->second.begin();jt!=it->second.end();++jt)
+            for (auto it = exprlistMap.rbegin(); it != exprlistMap.rend(); ++it)
+                for (auto jt = it->second.begin(); jt != it->second.end(); ++jt)
                     ans.push_back((*jt)->getUsername()
                                   + " expr:" + std::to_string((*jt)->getExpr()));
             break;
@@ -243,7 +244,7 @@ void UserService::writeToDisk() {
 }
 
 
-const String WordService::PATH = "words.txt";
+const String WordService::PATH = "wordsmap.txt";
 WordService *WordService::instance = nullptr;
 
 WordService::WordService() {
@@ -262,11 +263,14 @@ WordService *WordService::getInstance() {
 }
 
 String WordService::getWord(int level) {
-    return words[random() % words.size()];
+    srand(NULL);
+    int ran = rand()%5+1;
+    return wordsmap[level+ran][rand()%wordsmap[level+ran].size()];
+
 }
 
 void WordService::saveWord(String word) {
-    this->words.push_back(word);
+    this->wordsmap[word.size()].push_back(word);
 }
 
 
@@ -274,21 +278,24 @@ void WordService::readWordsFromDisk() {
     ifstream in(PATH, std::ios::in);
     String word;
     while (in >> word)
-        words.push_back(word);
+        wordsmap[word.size()].push_back(word);
     in.close();
 }
 
 void WordService::writeToDisk() {
     ofstream out(PATH, std::ios::out);
-    for (auto it = words.begin(); it != words.end(); ++it) {
-        out << *it << " ";
+    for (auto it = wordsmap.begin(); it != wordsmap.end(); ++it) {
+        for (auto jt = it->second.begin(); jt != it->second.end(); ++jt)
+            out << *jt << " ";
     }
     out.close();
 }
 
 bool WordService::contain(String word) {
-    for(int i = 0;i<words.size();++i)
-        if(word == words[i])
+    if (wordsmap.find(word.size()) == wordsmap.end())
+        return false;
+    for (auto it = wordsmap[word.size()].begin(); it != wordsmap[word.size()].end(); ++it)
+        if (*it == word)
             return true;
     return false;
 }
