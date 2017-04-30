@@ -181,6 +181,8 @@ std::vector<String> UserService::getOrder(int kind, String type) {
     return ans;
 }
 
+
+
 void UserService::readUserFromDisk() {
     ifstream in(PATH, std::ios::in);
     String line;
@@ -241,6 +243,34 @@ void UserService::writeToDisk() {
         out << std::endl;
     }
     out.close();
+}
+
+std::set<String> UserService::getUserNameByCondition(int level, int nums, String type) {
+    std::set<String> ans;
+    bool needlevel = level != -1;
+    bool neednums = nums != -1;
+    bool needType = type != "";
+    for (auto it = users.begin(); it != users.end(); ++it) {
+        User *user = *it;
+        if (!needlevel || (level == user->getLevel())) {
+            if (!needType || type == user->getType()) {
+                if (!neednums) {
+                    ans.insert(user->getUsername());
+                } else {
+                    if (user->getType() == "player") {
+                        if (dynamic_cast<Player *>(user)->getPlayedNum() == nums)
+                            ans.insert(user->getUsername());
+                    } else {
+                        if (dynamic_cast<Master *>(user)->getOutNum() == nums)
+                            ans.insert(user->getUsername());
+                    }
+                }
+                if (ans.size() > 50)
+                    break;
+            }
+        }
+    }
+    return ans;
 }
 
 

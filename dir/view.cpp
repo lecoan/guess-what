@@ -115,7 +115,7 @@ void OrderView::showOrder() {
     cout << "total:" << vec.size() << endl << endl;
 }
 
-void OrderView::showSearch() {
+void OrderView::showSearchByName() {
     if (controller == nullptr)
         controller = UserController::getInstance();
     String name;
@@ -132,6 +132,10 @@ void OrderView::showSearch() {
             <<"type:"<<user->getType()<<endl
             <<"level:"<<user->getLevel()<<endl<<endl;
     }
+}
+
+void OrderView::showSearchByCondition() {
+
 }
 
 GameController *GameView::controller = nullptr;
@@ -215,7 +219,7 @@ void MainView::showMain() {
         } else if (command == "order") {
             OrderView::showOrder();
         }else if(command == "search"){
-          OrderView::showSearch();
+            OrderView::showSearchByName();
         } else if (command == "logout") {
             controller->logout();
         } else if (command == "exit") {

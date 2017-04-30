@@ -98,6 +98,8 @@ public:
 
     std::vector<String> getOrder(int kind, String type);
 
+    std::set<String> getUserNameByCondition(int level, int nums, String type);
+
     void writeToDisk();
 };
 

@@ -30,7 +30,9 @@ private:
 public:
     static void showOrder();
 
-    static void showSearch();
+    static void showSearchByName();
+
+    static void showSearchByCondition();
 };
 
 class GameView {
