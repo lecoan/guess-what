@@ -6,6 +6,7 @@
 class UserController {
     typedef std::string String;
 private:
+    //TODO
     User *loginUser;
     UserService *service;
     static UserController *instance;

@@ -152,6 +152,7 @@ void GameView::showGame() {
 
 
 void GameView::showQuestion() {
+    //TODO
     Player *player = dynamic_cast<Player *>(controller->getLoginUser());
     String word, ans;
     int count = 0;
