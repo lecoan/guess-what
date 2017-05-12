@@ -5,45 +5,34 @@
 #ifndef GUESS_WHAT_SOCKET_H
 #define GUESS_WHAT_SOCKET_H
 
-#include <sys/socket.h>
 #include <string>
 
 using std::string;
 
-class Socket {
-private:
-    struct sockaddr in_adrr;
-
-public:
-    bool connect(string ip, int port);
-
-    bool bind(int port);
-
-    void sendBits(char *ptr, int len);
-
-    void sendString(string &s);
-
-    char *readBit();
-
-    string readString();
-
-    bool disconnect();
-};
-
 class ServerSocket {
+private:
+    int myId;
 public:
-    bool bind(int port);
+    ServerSocket();
 
-    bool listen();
+    bool Bind(int port);
 
-    void accept();
+    bool Listen(int max = 10);
+
+    bool Accept();
+
+    bool Send(string msg);
+
+    string Read();
+
+    void Close();
 };
 
-class ClientSocket {
+
+
+class NetHelper {
 public:
-    bool connect(string ip, int port);
 
 };
-
 
 #endif //GUESS_WHAT_SOCKET_H
