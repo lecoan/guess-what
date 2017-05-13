@@ -53,6 +53,7 @@ void Player::playedNumIncrease(int n) {
 
 Player::Player() {
     Player("", "", 1, 0, 0);
+    canChallenge = false;
 }
 
 String Player::getType() {
@@ -66,6 +67,7 @@ Player::Player(String username, String passwd, unsigned level,
     this->level = level;
     this->expr = expr;
     this->playedNum = num;
+    canChallenge = false;
 }
 
 unsigned Master::getOutNum() {

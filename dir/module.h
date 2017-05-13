@@ -41,6 +41,7 @@ public:
 class Player : public User {
 private:
     unsigned playedNum;
+    bool canChallenge;
 public:
     Player();
 
@@ -50,6 +51,10 @@ public:
     String getType() override;
 
     unsigned getPlayedNum();
+
+    bool canChallenge();
+
+    void canChallenge(bool can);
 
     void playedNumIncrease(int n = 1);
 };
