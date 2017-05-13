@@ -44,6 +44,7 @@ bool ClientSocket::Send(string meg) {
     if(myId <0)
         return -1;
     string data = meg+"\n";
+    last = data;
     return send(myId,data.c_str(),data.size(),NULL)>0;
 }
 
@@ -55,6 +56,10 @@ void ClientSocket::Close() {
 
 ClientSocket::ClientSocket(int id) {
     myId = id;
+}
+
+void ClientSocket::Repeat() {
+    Send(last);
 }
 
 

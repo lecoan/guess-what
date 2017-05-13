@@ -36,7 +36,7 @@ unsigned User::getExpr() {
 }
 
 void User::exprIncrease(int n) {
-    int LEVLE_NEED_EXPR = level*EXPR_FOR_USER;
+    int LEVLE_NEED_EXPR = level * EXPR_FOR_USER;
     int t = this->expr + n;
     this->expr = expr % LEVLE_NEED_EXPR;
     this->level += t / LEVLE_NEED_EXPR;
@@ -68,6 +68,14 @@ Player::Player(String username, String passwd, unsigned level,
     this->expr = expr;
     this->playedNum = num;
     canChallenge = false;
+}
+
+bool Player::ifcanChallenge() {
+    return canChallenge;
+}
+
+void Player::setCanChallenge(bool can) {
+    canChallenge = can;
 }
 
 unsigned Master::getOutNum() {
@@ -117,17 +125,15 @@ UserService *UserService::getInstance() {
 
 void UserService::updateUser(User *user) {
 
+    levellistMap[user->getLevel()].insert(user);
     for (auto it = levellistMap.begin(); it != levellistMap.end(); ++it) {
-        if (it->first == user->getLevel())
-            it->second.insert(user);
-        else if (it->second.find(user) != it->second.end()) {
+        if (it->second.find(user) != it->second.end()) {
             it->second.erase(user);
         }
     }
+    exprlistMap[user->getExpr()].insert(user);
     for (auto it = exprlistMap.begin(); it != exprlistMap.end(); ++it) {
-        if (it->first == user->getExpr())
-            it->second.insert(user);
-        else if (it->second.find(user) != it->second.end()) {
+        if (it->second.find(user) != it->second.end()) {
             it->second.erase(user);
         }
     }
@@ -137,10 +143,9 @@ void UserService::updateUser(User *user) {
     } else {
         num = dynamic_cast<Master *>(user)->getOutNum();
     }
+    numlistMap[num].insert(user);
     for (auto it = numlistMap.begin(); it != numlistMap.end(); ++it) {
-        if (it->first == num)
-            it->second.insert(user);
-        else if (it->second.find(user) != it->second.end()) {
+        if (it->second.find(user) != it->second.end()) {
             it->second.erase(user);
         }
     }
@@ -182,7 +187,6 @@ std::vector<String> UserService::getOrder(int kind, String type) {
     }
     return ans;
 }
-
 
 
 void UserService::readUserFromDisk() {
@@ -275,6 +279,36 @@ std::set<String> UserService::getUserNameByCondition(int level, int nums, String
     return ans;
 }
 
+void UserService::removeUser(User *user) {
+    for (auto it = levellistMap.begin(); it != levellistMap.end(); ++it) {
+        if (it->second.find(user) != it->second.end()) {
+            it->second.erase(user);
+        }
+    }
+    for (auto it = exprlistMap.begin(); it != exprlistMap.end(); ++it) {
+        if (it->second.find(user) != it->second.end()) {
+            it->second.erase(user);
+        }
+    }
+    for (auto it = numlistMap.begin(); it != numlistMap.end(); ++it) {
+        if (it->second.find(user) != it->second.end()) {
+            it->second.erase(user);
+        }
+    }
+    delete user;
+}
+
+std::set<std::string> UserService::getOnlineUsers() {
+    std::set<std::string> data;
+    for(auto it = onlineUsers.begin();it!=onlineUsers.end();++it){
+        data.insert((*it)->getUsername());
+    }
+}
+
+void UserService::addOnlineUser(User *user) {
+    onlineUsers.insert(user);
+}
+
 
 const String WordService::PATH = "wordsmap.txt";
 WordService *WordService::instance = nullptr;
@@ -296,8 +330,8 @@ WordService *WordService::getInstance() {
 
 String WordService::getWord(int level) {
     srand(NULL);
-    int ran = rand()%5+1;
-    return wordsmap[level+ran][rand()%wordsmap[level+ran].size()];
+    int ran = rand() % 5 + 1;
+    return wordsmap[level + ran][rand() % wordsmap[level + ran].size()];
 
 }
 

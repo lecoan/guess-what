@@ -52,9 +52,9 @@ public:
 
     unsigned getPlayedNum();
 
-    bool canChallenge();
+    bool ifcanChallenge();
 
-    void canChallenge(bool can);
+    void setCanChallenge(bool can);
 
     void playedNumIncrease(int n = 1);
 };
@@ -85,6 +85,7 @@ private:
     static UserService *instance;
     const static String PATH;
     std::set<User *> users;
+    std::set<User *> onlineUsers;
     std::map<String, User *> nameMap;
     std::map<int, std::set<User *>> levellistMap;
     std::map<int, std::set<User *>> numlistMap;
@@ -93,6 +94,7 @@ private:
     void readUserFromDisk();
 
 public:
+
     static UserService *getInstance();
 
     void updateUser(User *user);
@@ -106,6 +108,12 @@ public:
     std::set<String> getUserNameByCondition(int level, int nums, String type);
 
     void writeToDisk();
+
+    void removeUser(User *user);
+
+    std::set<std::string> getOnlineUsers();
+
+    void addOnlineUser(User *user);
 };
 
 class WordService {

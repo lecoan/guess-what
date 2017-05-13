@@ -24,6 +24,9 @@ public:
 
     void Close();
 
+    void Repeat();
+
+    string last;
 };
 
 
@@ -42,9 +45,7 @@ public:
     void Close();
 };
 
-
 class NetHelper {
-public:
 
 };
 
