@@ -9,6 +9,24 @@
 
 using std::string;
 
+class ClientSocket {
+    int myId;
+public:
+    ClientSocket();
+
+    ClientSocket(int id);
+
+    bool Connect(string ip, int port);
+
+    string Read();
+
+    bool Send(string meg);
+
+    void Close();
+
+};
+
+
 class ServerSocket {
 private:
     int myId;
@@ -19,15 +37,10 @@ public:
 
     bool Listen(int max = 10);
 
-    bool Accept();
-
-    bool Send(string msg);
-
-    string Read();
+    ClientSocket* Accept();
 
     void Close();
 };
-
 
 
 class NetHelper {
