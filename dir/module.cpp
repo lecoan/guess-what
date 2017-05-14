@@ -300,13 +300,18 @@ void UserService::removeUser(User *user) {
 
 std::set<std::string> UserService::getOnlineUsers() {
     std::set<std::string> data;
-    for(auto it = onlineUsers.begin();it!=onlineUsers.end();++it){
-        data.insert((*it)->getUsername());
+    for (auto it = onlineUsers.begin(); it != onlineUsers.end(); ++it) {
+        if ((*it)->getType() == "player")
+            data.insert((*it)->getUsername());
     }
 }
 
 void UserService::addOnlineUser(User *user) {
     onlineUsers.insert(user);
+}
+
+void UserService::removeOnlineUser(User *pUser) {
+    onlineUsers.erase(pUser);
 }
 
 
@@ -329,7 +334,7 @@ WordService *WordService::getInstance() {
 }
 
 String WordService::getWord(int level) {
-    srand(NULL);
+    srand(0);
     int ran = rand() % 5 + 1;
     return wordsmap[level + ran][rand() % wordsmap[level + ran].size()];
 

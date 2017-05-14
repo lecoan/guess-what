@@ -114,6 +114,8 @@ public:
     std::set<std::string> getOnlineUsers();
 
     void addOnlineUser(User *user);
+
+    void removeOnlineUser(User *pUser);
 };
 
 class WordService {
