@@ -53,7 +53,6 @@ static void *distribution(void *arg) {
             unsigned int level, expr, num;
             ss >> type >> username >> password >> level >> expr >> num;
             netHelper.update(type, username, password, level, expr, num);
-
         } else if (command == "getOrder") { // command + kind + type
             int kind;
             string type;
@@ -85,11 +84,12 @@ static void *distribution(void *arg) {
             string name;
             ss >> name >> can;
             netHelper.setChallengable(name, can);
-        } else if (command == "finishWord") { // command + isRight + period
+        } else if (command == "finishWord") { // command + isRight + period + oppoName
             bool isRight;
             long period;
-            ss >> isRight >> period;
-            //TODO
+            string oppoName;
+            ss >> isRight >> period>>oppoName;
+            netHelper.finishWord(isRight,period,oppoName);
         } else if (command == "reply") { // command + agree + name
             bool agree;
             string name;

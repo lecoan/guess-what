@@ -53,7 +53,7 @@ void Player::playedNumIncrease(int n) {
 
 Player::Player() {
     Player("", "", 1, 0, 0);
-    canChallenge = false;
+
 }
 
 String Player::getType() {
@@ -67,7 +67,7 @@ Player::Player(String username, String passwd, unsigned level,
     this->level = level;
     this->expr = expr;
     this->playedNum = num;
-    canChallenge = false;
+    canChallenge = true;
 }
 
 bool Player::ifcanChallenge() {
@@ -304,6 +304,7 @@ std::set<std::string> UserService::getOnlineUsers() {
         if ((*it)->getType() == "player")
             data.insert((*it)->getUsername());
     }
+    return data;
 }
 
 void UserService::addOnlineUser(User *user) {
@@ -336,8 +337,8 @@ WordService *WordService::getInstance() {
 String WordService::getWord(int level) {
     srand(0);
     int ran = rand() % 5 + 1;
-    return wordsmap[level + ran][rand() % wordsmap[level + ran].size()];
-
+    String word =  wordsmap[level + ran][rand() % wordsmap[level + ran].size()];
+    return word;
 }
 
 void WordService::saveWord(String word) {

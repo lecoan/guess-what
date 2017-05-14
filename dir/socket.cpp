@@ -38,7 +38,8 @@ string ClientSocket::Read() {
     char buffer[1024];
     read(myId, buffer, sizeof(buffer));
     string data = buffer;
-    //data = data.substr(0,data.find('\n'));
+    data = data.substr(0,data.find('\n')+1);
+    data.pop_back();
     cout << "from id:" << myId << " read data-->" << data << endl;
     return data;
 }
@@ -114,6 +115,7 @@ using std::to_string;
 WordService *NetHelper::wordService = nullptr;
 UserService *NetHelper::userService = nullptr;
 std::map<string, ClientSocket *> NetHelper::sockMap;
+std::map<string, NetHelper::gameData> NetHelper::gameDataMap;
 
 NetHelper::~NetHelper() {
 
@@ -123,13 +125,16 @@ NetHelper::NetHelper(ClientSocket *clientSocket) {
     socket = clientSocket;
     wordService = WordService::getInstance();
     userService = UserService::getInstance();
+    loginUser = nullptr;
 }
 
 void NetHelper::exit() {
     socket->Close();
-    sockMap.erase(loginUser->getUsername());
-    userService->removeOnlineUser(loginUser);
-    loginUser = nullptr;
+    if(loginUser != nullptr){
+        sockMap.erase(loginUser->getUsername());
+        userService->removeOnlineUser(loginUser);
+        loginUser = nullptr;
+    }
 }
 
 void NetHelper::getWord(int level) {
@@ -280,5 +285,28 @@ void NetHelper::challenge(string name, string senderName) {
 void NetHelper::reply(bool agree, string name) {
     if (agree) {
         sockMap[name]->Send("OK");
+    }
+}
+
+void NetHelper::finishWord(bool isRight, long period, string oppoName) {
+    if(gameDataMap.find(oppoName)!=gameDataMap.end()){
+        gameData data = gameDataMap[oppoName];
+        if(data.isRight&&data.period<period){
+            socket->Send("LOSE");
+            sockMap[oppoName]->Send("WIN");
+            gameDataMap.erase(oppoName);
+        } else {
+            socket->Send("WIN");
+            sockMap[oppoName]->Send("LOSE");
+        }
+        Player* player1 = (Player *) userService->getUserByName(oppoName);
+        Player* player2 = (Player *) loginUser;
+        player1->setCanChallenge(true);
+        player2->setCanChallenge(true);
+    } else{
+        gameData data;
+        data.period = period;
+        data.isRight = isRight;
+        gameDataMap[loginUser->getUsername()] = data;
     }
 }

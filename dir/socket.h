@@ -52,9 +52,15 @@ public:
 
 class NetHelper {
 private:
+    struct gameData{
+        bool isRight;
+        long period;
+    };
+
     static WordService *wordService;
     static UserService *userService;
     static std::map<string, ClientSocket *> sockMap;
+    static std::map<string,gameData> gameDataMap;
     ClientSocket *socket;
     User *loginUser;
 public:
@@ -93,6 +99,8 @@ public:
     void challenge(string name, string senderName);
 
     void reply(bool agree, string name);
+
+    void finishWord(bool isRight, long period, string oppoName);
 };
 
 #endif //GUESS_WHAT_SOCKET_H
