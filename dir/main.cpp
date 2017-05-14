@@ -26,7 +26,7 @@ static void *distribution(void *arg) {
     NetHelper netHelper(socket);
     while (true) {
         string msg = socket->Read();
-        std::stringstream ss;
+        std::stringstream ss(msg);
         string command;
         ss >> command;
         if (command == "exit") {

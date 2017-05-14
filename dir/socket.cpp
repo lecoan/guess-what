@@ -38,6 +38,7 @@ string ClientSocket::Read() {
     char buffer[1024];
     read(myId, buffer, sizeof(buffer));
     string data = buffer;
+    //data = data.substr(0,data.find('\n'));
     cout << "from id:" << myId << " read data-->" << data << endl;
     return data;
 }
@@ -154,8 +155,8 @@ void NetHelper::login(string name, string passwd) {
         userService->addOnlineUser(user);
         sockMap[name] = socket;
 
-    }
-    socket->Send("ERROR");
+    } else
+        socket->Send("ERROR");
 }
 
 void NetHelper::signUp(string name, string passwd, string type) {
