@@ -7,8 +7,11 @@ int main() {
     ServerSocket socket;
     socket.Bind(PORT);
     socket.Listen(MAX_NUM);
-
+    //程序不断接受来自客户端的连接
     while (true) {
+        //在ServerSocket收到新的客户端的连接请求后
+        //创建一个ClientSocket对象并传入新开的线程来
+        //和特定客户端进行通信
         ClientSocket *clientSocket = socket.Accept();
         pthread_t id;
         pthread_create(&id, NULL, distribution, clientSocket);
